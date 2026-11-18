@@ -1,0 +1,22 @@
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+
+# R build and check output; the pkgdown site is published from the gh-pages branch
+htheoryR/docs/
+htheoryR/*.tar.gz
+*.Rcheck/
+.Rhistory
+.RData
+.Rproj.user/
+
+# LaTeX build files
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.out
+*.toc
+*.blg
+*.spl

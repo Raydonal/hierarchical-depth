@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "script": "scripts/network_topology.py",
+    "rng_seed": null,
+    "timestamp_utc": "2026-11-13T16:54:32Z",
+    "versions": {
+      "python": "3.10.12",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "mpmath": "1.3.0",
+      "matplotlib": "3.10.9"
+    },
+    "note": "Deterministic (no random numbers). Simple undirected graphs; C. elegans = union of chemical synapses and gap junctions among neurons, NMJ pseudo-node and R/Rp mirror rows removed. Reciprocity for C. elegans is not meaningful (gap junctions enter as single pairs)."
+  },
+  "networks": {
+    "email-Eu-core": {
+      "n_nodes": 986,
+      "n_edges_undirected": 16064,
+      "n_edges_directed": 25571,
+      "density": 0.033080384262929745,
+      "mean_degree": 32.5841784989858,
+      "degree_std": 37.02550397234685,
+      "reciprocity": 0.7184701419576864,
+      "global_clustering": 0.26739242877040204,
+      "degree_assortativity": -0.02574336808308944
+    },
+    "OpenFlights": {
+      "n_nodes": 3330,
+      "n_edges_undirected": 19079,
+      "n_edges_directed": 37274,
+      "density": 0.003442132429816419,
+      "mean_degree": 11.458858858858859,
+      "degree_std": 24.69814684458443,
+      "reciprocity": 0.9762569083006921,
+      "global_clustering": 0.24894090810341082,
+      "degree_assortativity": -0.010285816404952136
+    },
+    "C. elegans": {
+      "n_nodes": 279,
+      "n_edges_undirected": 2287,
+      "n_edges_directed": 2595,
+      "density": 0.05897217709703205,
+      "mean_degree": 16.39426523297491,
+      "degree_std": 12.494390257270567,
+      "reciprocity": 0.2373795761078998,
+      "global_clustering": 0.21348097711638356,
+      "degree_assortativity": -0.09265380743986666
+    }
+  }
+}

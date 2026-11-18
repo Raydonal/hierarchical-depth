@@ -1,0 +1,3 @@
+^pkgdown$
+^_pkgdown\.yml$
+^docs$

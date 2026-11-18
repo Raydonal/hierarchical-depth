@@ -1,0 +1,203 @@
+{
+  "metadata": {
+    "script": "scripts/analyze_openflights.py",
+    "rng_seed": 20260905,
+    "timestamp_utc": "2026-11-13T16:51:58Z",
+    "versions": {
+      "python": "3.10.12",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "mpmath": "1.3.0",
+      "matplotlib": "3.10.9"
+    },
+    "rng_streams": {
+      "depth_test": "default_rng(SEED)",
+      "bootstrap_ci": "default_rng([SEED, 1])"
+    },
+    "n_boot_test": 1000,
+    "n_boot_ci": 1000,
+    "note": "The depth test is a test of H0: N = N_round with N_round selected from the same data; read its p-value as a goodness-of-fit diagnostic at the selected depth, not as a confirmatory test."
+  },
+  "nesting": {
+    "n_airports": 3330,
+    "n_countries": 225,
+    "n_continents": 6,
+    "n_route_rows": 67240
+  },
+  "series": [
+    {
+      "system": "OpenFlights",
+      "series": "out-degree",
+      "n": 3315,
+      "mean": 20.283559577677224,
+      "variance": 2926.033017796978,
+      "vmr": 144.256386882763,
+      "n_zero": 15,
+      "zero_policy": "dropped",
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 0.2155323896496789,
+          "N_hat": 1.2066221134644612,
+          "N_round": 1,
+          "lambda_hat": 20.283559577677224,
+          "test_status": "ok",
+          "N0": 1,
+          "statistic": 0.09522117135367303,
+          "p_value": 0.194,
+          "a_hat_H0": 0.14158921650358494,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.12582894198467579,
+            0.33284277796132394
+          ],
+          "ci_N_hat": [
+            0.9304190479007821,
+            1.5276720019657182
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.3470351846982034 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    },
+    {
+      "system": "OpenFlights",
+      "series": "in-degree",
+      "n": 3321,
+      "mean": 20.246913580246915,
+      "variance": 2911.5987747257445,
+      "vmr": 143.80457362974713,
+      "n_zero": 9,
+      "zero_policy": "dropped",
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 0.2148295678741646,
+          "N_hat": 1.2040673710682739,
+          "N_round": 1,
+          "lambda_hat": 20.246913580246915,
+          "test_status": "ok",
+          "N0": 1,
+          "statistic": 0.0940801642139979,
+          "p_value": 0.193,
+          "a_hat_H0": 0.1417805681275473,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.12699404806142223,
+            0.3341886157396321
+          ],
+          "ci_N_hat": [
+            0.9377884141288597,
+            1.5425066771942568
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.346647495715897 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    },
+    {
+      "system": "OpenFlights",
+      "series": "total-degree",
+      "n": 3330,
+      "mean": 40.38438438438438,
+      "variance": 11637.713509906303,
+      "vmr": 288.1736019332837,
+      "n_zero": 0,
+      "zero_policy": "dropped",
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 0.211859480970916,
+          "N_hat": 1.2002501867983855,
+          "N_round": 1,
+          "lambda_hat": 40.38438438438438,
+          "test_status": "ok",
+          "N0": 1,
+          "statistic": 0.09264303566779031,
+          "p_value": 0.193,
+          "a_hat_H0": 0.14062707753376846,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.12486729890719264,
+            0.3168047871043133
+          ],
+          "ci_N_hat": [
+            0.9202980120588182,
+            1.4994702618787041
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.3450010079707497 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+# Minimum versions; the exact versions that produced results/ are in requirements-lock.txt.
+# scipy 1.15 requires numpy >= 2: if an older system numpy is present, keep the newer one
+# installed with pip in front of it rather than downgrading.
+mpmath>=1.3
+numpy>=2.0
+scipy>=1.11
+matplotlib>=3.7
+pytest>=7.0

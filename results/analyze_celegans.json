@@ -1,0 +1,215 @@
+{
+  "metadata": {
+    "script": "scripts/analyze_celegans.py",
+    "rng_seed": 20260826,
+    "timestamp_utc": "2026-11-13T16:52:01Z",
+    "versions": {
+      "python": "3.10.12",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "mpmath": "1.3.0",
+      "matplotlib": "3.10.9"
+    },
+    "rng_streams": {
+      "depth_test": "default_rng(SEED)",
+      "bootstrap_ci": "default_rng([SEED, 1])"
+    },
+    "n_boot_test": 1000,
+    "n_boot_ci": 1000,
+    "note": "The depth test is a test of H0: N = N_round with N_round selected from the same data; read its p-value as a goodness-of-fit diagnostic at the selected depth, not as a confirmatory test."
+  },
+  "loader": {
+    "rows": 6417,
+    "S_Sp_rows": 2575,
+    "R_Rp_rows_dropped": 2658,
+    "EJ_rows": 1028,
+    "NMJ_rows_dropped": 153,
+    "self_loops_dropped": 3,
+    "n_neurons": 281,
+    "n_chemical_directed_pairs": 2194,
+    "n_chemical_contacts": 6394,
+    "n_gap_junction_pairs": 514,
+    "n_gap_junction_contacts": 887,
+    "gap_junction_direction_disagreements": 0,
+    "gap_junction_one_sided_pairs": 0
+  },
+  "series": [
+    {
+      "system": "C. elegans",
+      "series": "out-degree",
+      "n": 253,
+      "mean": 25.272727272727273,
+      "variance": 421.4552641034855,
+      "vmr": 16.67628742855518,
+      "n_zero": 28,
+      "zero_policy": "dropped",
+      "weighted": true,
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 8.064330779351328,
+          "N_hat": 4.128462248433123,
+          "N_round": 4,
+          "lambda_hat": 25.272727272727273,
+          "test_status": "ok",
+          "N0": 4,
+          "statistic": 0.001451592031985971,
+          "p_value": 0.989,
+          "a_hat_H0": 7.798456626926166,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.04700000000000004,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            1.0264987081064927,
+            60.99815911031126
+          ],
+          "ci_N_hat": [
+            0.5704835486867061,
+            28.407184973613976
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.895242721774218 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    },
+    {
+      "system": "C. elegans",
+      "series": "in-degree",
+      "n": 268,
+      "mean": 23.85820895522388,
+      "variance": 1014.7485520160391,
+      "vmr": 42.53246980611487,
+      "n_zero": 13,
+      "zero_policy": "dropped",
+      "weighted": true,
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 1.0919814675948252,
+          "N_hat": 1.5508749361053662,
+          "N_round": 2,
+          "lambda_hat": 23.85820895522388,
+          "test_status": "ok",
+          "N0": 2,
+          "statistic": -0.06124653728932028,
+          "p_value": 0.77,
+          "a_hat_H0": 1.525465910226138,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.4093707817027391,
+            1.8094448402387326
+          ],
+          "ci_N_hat": [
+            0.6665359599126889,
+            2.2346053881671915
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.600968717964409 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    },
+    {
+      "system": "C. elegans",
+      "series": "total-degree",
+      "n": 279,
+      "mean": 52.193548387096776,
+      "variance": 2692.220603537982,
+      "vmr": 51.581482515251814,
+      "n_zero": 2,
+      "zero_policy": "dropped",
+      "weighted": true,
+      "classes": {
+        "0.5": {
+          "status": "failed",
+          "reason": "L3/L2 = 3.1659975800313034 not bracketed by a in (0.001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        },
+        "1": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 7.549810419730871,
+          "N_hat": 4.768815253566797,
+          "N_round": 5,
+          "lambda_hat": 52.193548387096776,
+          "test_status": "ok",
+          "N0": 5,
+          "statistic": 0.006041202361677378,
+          "p_value": 0.995,
+          "a_hat_H0": 7.890453503886984,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.264,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            3.9208711513179675,
+            134.27199187196564
+          ],
+          "ci_N_hat": [
+            1.8541161504564216,
+            98.81439902887757
+          ]
+        }
+      },
+      "selected_class": "1"
+    }
+  ]
+}

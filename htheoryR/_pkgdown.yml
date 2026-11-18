@@ -1,0 +1,76 @@
+url: https://raydonal.github.io/hierarchical-depth/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Special functions
+  desc: >
+    Arbitrary-precision evaluation of the two Meijer-G shapes the whole
+    package reduces to.
+  contents:
+  - g_gamma_chain
+  - g_invgamma_chain
+
+- title: Reservoir background
+  desc: The cascade's temperature law and its dynamics.
+  contents:
+  - f_N
+  - sample_TN
+  - sample_conditional
+  - conditional_pdf
+  - kappa_from_a
+  - simulate_sde
+
+- title: Statistical factor
+  desc: "`B_N^(s)(E; a)` and its tail integral."
+  contents:
+  - B
+  - B_tilde
+  - B_prime
+  - omega_of
+  - shift
+
+- title: Entropy generator
+  contents:
+  - s_tilde
+  - parametric_curve
+  - E_of_B
+  - make_interpolants
+  - make_E_of_B
+  - s_of_B
+  - s_prime_of_B
+  - S_simplex
+  - s_boltzmann_shannon
+  - s_tsallis_kernel
+  - q_indices
+  - tsallis_entropy
+
+- title: Identifiability and estimation
+  desc: Recovering the cascade depth from a single marginal.
+  contents:
+  - log_cumulants_theory
+  - empirical_log_cumulants
+  - fit_homogeneous
+  - test_depth
+  - power_curve
+
+- title: Networks
+  desc: The mixed-Poisson application, depth from a degree sequence alone.
+  contents:
+  - sample_degrees
+  - log_factorial_moment_theory
+  - empirical_log_factorial_moments
+  - fit_homogeneous_network
+  - test_depth_degrees
+
+- title: Maximum entropy
+  desc: Closing the loop -- maximizing `S[p]` recovers `p = B(E)/Z`.
+  contents:
+  - target_distribution
+  - maximize
+  - stationarity_residual
+
+- title: Internal utilities
+  contents:
+  - vectorize_scalar

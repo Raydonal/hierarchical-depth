@@ -1,0 +1,197 @@
+{
+  "metadata": {
+    "script": "scripts/analyze_email_eu_core.py",
+    "rng_seed": 20260905,
+    "timestamp_utc": "2026-11-13T16:51:54Z",
+    "versions": {
+      "python": "3.10.12",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "mpmath": "1.3.0",
+      "matplotlib": "3.10.9"
+    },
+    "rng_streams": {
+      "depth_test": "default_rng(SEED)",
+      "bootstrap_ci": "default_rng([SEED, 1])"
+    },
+    "n_boot_test": 1000,
+    "n_boot_ci": 1000,
+    "note": "The depth test is a test of H0: N = N_round with N_round selected from the same data; read its p-value as a goodness-of-fit diagnostic at the selected depth, not as a confirmatory test."
+  },
+  "series": [
+    {
+      "system": "email-Eu-core",
+      "series": "out-degree",
+      "n": 1005,
+      "mean": 25.443781094527363,
+      "variance": 1109.379177743125,
+      "vmr": 43.601191726246164,
+      "n_zero": 137,
+      "zero_policy": "kept",
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 0.7684071776194824,
+          "N_hat": 1.1801800717963917,
+          "N_round": 1,
+          "lambda_hat": 25.443781094527363,
+          "test_status": "ok",
+          "N0": 1,
+          "statistic": 0.04277976204833189,
+          "p_value": 0.391,
+          "a_hat_H0": 0.5972551485889936,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.3962217726829048,
+            1.2659072346768812
+          ],
+          "ci_N_hat": [
+            0.7311676631091986,
+            1.7522335942693326
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.537714404544797 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    },
+    {
+      "system": "email-Eu-core",
+      "series": "in-degree",
+      "n": 1005,
+      "mean": 25.443781094527363,
+      "variance": 781.5881329670055,
+      "vmr": 30.718238380659365,
+      "n_zero": 14,
+      "zero_policy": "kept",
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 0.8017881525660412,
+          "N_hat": 0.9556779545595168,
+          "N_round": 1,
+          "lambda_hat": 25.443781094527363,
+          "test_status": "ok",
+          "N0": 1,
+          "statistic": -0.00905583835429602,
+          "p_value": 0.825,
+          "a_hat_H0": 0.8561672050900259,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.554565341718719,
+            1.1266109574982879
+          ],
+          "ci_N_hat": [
+            0.7269257261286058,
+            1.2376665208556965
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.5452432497027186 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    },
+    {
+      "system": "email-Eu-core",
+      "series": "total-degree",
+      "n": 1005,
+      "mean": 50.88756218905473,
+      "variance": 3615.3057656988685,
+      "vmr": 71.04497857978497,
+      "n_zero": 0,
+      "zero_policy": "kept",
+      "classes": {
+        "0.5": {
+          "status": "ok",
+          "reason": null,
+          "a_hat": 0.8252871608869108,
+          "N_hat": 1.0905223601014369,
+          "N_round": 1,
+          "lambda_hat": 50.88756218905473,
+          "test_status": "ok",
+          "N0": 1,
+          "statistic": 0.019496587283022837,
+          "p_value": 0.645,
+          "a_hat_H0": 0.7264983617789386,
+          "n_boot": 1000,
+          "ci_method": "nonparametric bootstrap, vertices resampled with replacement, percentile interval",
+          "ci_n_boot": 1000,
+          "ci_failure_fraction": 0.0,
+          "ci_level": 0.95,
+          "ci_a_hat": [
+            0.49458831809759574,
+            1.2895609140684576
+          ],
+          "ci_N_hat": [
+            0.74251238602827,
+            1.578622876976354
+          ]
+        },
+        "1": {
+          "status": "failed",
+          "reason": "L3/L2 = 2.5503830180187546 not bracketed by a in (2.000001, 1000.0); widen a_bracket or check the sample size",
+          "a_hat": null,
+          "N_hat": null,
+          "N_round": null,
+          "lambda_hat": null,
+          "test_status": "not run",
+          "N0": null,
+          "statistic": null,
+          "p_value": null,
+          "a_hat_H0": null,
+          "n_boot": null,
+          "ci_a_hat": null,
+          "ci_N_hat": null,
+          "ci_n_boot": null,
+          "ci_failure_fraction": null,
+          "ci_method": null
+        }
+      },
+      "selected_class": "0.5"
+    }
+  ]
+}
