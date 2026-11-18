@@ -1,7 +1,34 @@
 url: https://raydonal.github.io/hierarchical-depth/
 
+# The package lives in the htheoryR/ subfolder of the repository, so "Source"
+# links need the subfolder in their path.
+repo:
+  url:
+    home: https://github.com/Raydonal/hierarchical-depth/
+    source: https://github.com/Raydonal/hierarchical-depth/blob/main/htheoryR/
+    issue: https://github.com/Raydonal/hierarchical-depth/issues/
+    user: https://github.com/
+
 template:
   bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, results, identifiability, reference]
+  components:
+    results:
+      text: Results
+      href: articles/results.html
+    identifiability:
+      text: Worked example
+      href: articles/identifiability.html
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - articles/results
+  - articles/identifiability
 
 reference:
 - title: Special functions

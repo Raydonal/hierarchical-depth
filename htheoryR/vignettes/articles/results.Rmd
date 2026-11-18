@@ -1,0 +1,350 @@
+---
+title: "Results of the manuscript"
+description: >
+  Figures, tables and estimates of the accompanying manuscript: the model,
+  the simulation study of the depth test, three networks and a turbulence
+  record.
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.width = 7, fig.height = 4.4,
+                      dpi = 150, fig.align = "center")
+pal <- c("#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9")
+par_default <- function(...) par(mar = c(4.2, 4.2, 1, 1), las = 1, bty = "l",
+                                 cex.axis = 0.9, ...)
+
+# The results live in the repository, not in the installed package: find them.
+find_root <- function() {
+  d <- normalizePath(getwd())
+  for (i in 1:6) {
+    if (file.exists(file.path(d, "results", "compute_article_numbers.json")))
+      return(d)
+    d <- dirname(d)
+  }
+  stop("results/ not found: build this site from the hierarchical-depth repository")
+}
+root <- find_root()
+read_result <- function(name)
+  jsonlite::fromJSON(file.path(root, "results", paste0(name, ".json")),
+                     simplifyVector = FALSE)
+
+# The figures are copied next to this file by `make site` (from figures/ in the
+# repository) and referenced by relative path, so pkgdown copies them to the site.
+figure <- function(file, caption, width = 100) {
+  stopifnot(file.exists(file.path("figures", file)))
+  knitr::asis_output(sprintf("\n![%s](figures/%s){width=%d%%}\n\n", caption, file, width))
+}
+# Two half-width panels side by side (one column each on wide screens).
+figure_pair <- function(file1, caption1, file2, caption2) {
+  stopifnot(file.exists(file.path("figures", c(file1, file2))))
+  knitr::asis_output(sprintf(paste0(
+    "\n:::: {.row}\n::: {.col-md-6}\n![%s](figures/%s){width=100%%}\n:::\n",
+    "::: {.col-md-6}\n![%s](figures/%s){width=100%%}\n:::\n::::\n\n"),
+    caption1, file1, caption2, file2))
+}
+interval <- function(lo, hi, d = 3)
+  sprintf('<span style="white-space:nowrap">%s&ndash;%s</span>', signif(lo, d), signif(hi, d))
+pval <- function(p, n_boot) if (p < 1 / n_boot) sprintf("&lt;%g", 1 / n_boot) else sprintf("%.3f", p)
+class_label <- function(s) ifelse(s == "0.5", "1/2", "1")
+```
+
+<style>
+main table { font-size: 0.82em; display: block; max-width: 100%; overflow-x: auto; }
+main table td, main table th { padding: 0.3rem 0.35rem !important; }
+</style>
+
+This page collects the numerical results of the accompanying manuscript (in
+preparation). The numbers are read from `results/*.json` and the figures from
+`figures/` in the [repository](https://github.com/Raydonal/hierarchical-depth).
+Both are produced by the Python pipeline of the repository with fixed seeds
+(`make results figures`, about 13 minutes). `htheoryR` implements the same
+estimators; [Recovering the depth of a cascade](identifiability.html) runs
+them in R on simulated data.
+
+## The model
+
+```{r fig1}
+figure("fig1_cascade.png", paste(
+  "<b>Figure 1.</b> The cascade and its statistical factor in the class s = 1/2.",
+  "(a) Densities of log T<sub>i</sub> for i = 0, ..., 3, from simulated chains",
+  "with a<sub>i</sub> = 2 and T<sub>0</sub> = 1, offset vertically.",
+  "(b) Statistical factor B<sub>N</sub>(E) for N = 0, ..., 3 at a = 1, on a",
+  "logarithmic vertical scale. Deeper cascades decay faster near E = 0 and",
+  "more slowly in the tail."))
+```
+
+```{r fig2}
+figure("fig2_entropy.png", paste(
+  "<b>Figure 2.</b> Entropy generator plotted against the statistical factor",
+  "B for N = 0, ..., 5 and a = 1: (a) class s = 1/2; (b) class s = 1. The",
+  "marker on each curve indicates its maximum. All curves are concave, and",
+  "at fixed B the generator increases with N."))
+```
+
+```{r fig4}
+figure("fig4_network_model.png", paste(
+  "<b>Figure 4.</b> Hierarchical mixed-Poisson model. (a) Generative",
+  "hierarchy for N = 2: the propensity W<sub>v</sub> of a vertex is the",
+  "product of the factors of its communities, and its degree is Poisson with",
+  "mean &lambda;W<sub>v</sub>. (b) One realized graph with N = 2. (c)",
+  "Complementary cumulative degree distributions of 10<sup>5</sup> simulated",
+  "vertices for N = 0, ..., 3 (s = 1/2, a = 2, &lambda; = 20). Depth",
+  "increases the dispersion of the degrees, which is the information used by",
+  "the estimator."))
+```
+
+## Simulation: size and power of the depth test
+
+```{r power-data}
+num <- read_result("compute_article_numbers")
+pb <- num$power_by_depth
+sizes <- unlist(pb$sample_sizes)
+depths <- names(pb$by_N_true)
+rate <- sapply(depths, function(N) sapply(as.character(sizes),
+               function(n) pb$by_N_true[[N]][[n]]$rate))
+se <- sapply(depths, function(N) sapply(as.character(sizes),
+             function(n) pb$by_N_true[[N]][[n]]$se))
+reps <- pb$by_N_true[[1]][[1]]$n_reps
+```
+
+The bootstrap test of $H_0\colon N = `r pb$N0`$ was applied to samples from
+cascades of depth $N_{\text{true}} \in \{`r paste(depths, collapse = ", ")`\}$
+(class $s = 1/2$, $a = `r pb$a`$), with `r reps` samples per cell and
+`r pb$n_boot` bootstrap replicates per test. The row $N_{\text{true}} = 1$ is
+the size of the test (nominal level 0.05); the other rows are its power.
+
+```{r power-table}
+tab <- data.frame(N_true = depths, t(sapply(depths, function(N)
+  sprintf("%.2f (%.3f)", rate[, N], se[, N]))), check.names = FALSE)
+names(tab) <- c("True depth", paste("n =", sizes))
+knitr::kable(tab, align = "c", row.names = FALSE,
+             caption = "Rejection rate of H0: N = 1 (Monte Carlo standard error).")
+```
+
+```{r power-plot, fig.cap = "Rejection rate of the test of H0: N = 1 against the sample size, by true depth, read from results/compute_article_numbers.json. Bars are +/- 1.96 Monte Carlo standard errors; the dashed line is the nominal level 0.05."}
+par_default()
+plot(NULL, xlim = range(sizes), ylim = c(0, 1), log = "x",
+     xlab = "sample size n", ylab = "rejection rate")
+abline(h = 0.05, lty = 2, col = "grey40")
+for (j in seq_along(depths)) {
+  x <- sizes * (1 + 0.04 * (j - 2.5))
+  ok <- se[, j] > 0  # a rate of exactly 0 or 1 has no Monte Carlo error bar
+  arrows(x[ok], pmax(rate[ok, j] - 1.96 * se[ok, j], 0), x[ok],
+         pmin(rate[ok, j] + 1.96 * se[ok, j], 1),
+         angle = 90, code = 3, length = 0.03, col = pal[j])
+  lines(x, rate[, j], col = pal[j], lwd = 2, lty = j, type = "b", pch = 14 + j)
+}
+legend("right", bty = "n", col = pal[seq_along(depths)], lty = seq_along(depths),
+       pch = 14 + seq_along(depths), lwd = 2,
+       legend = paste("true N =", depths))
+```
+
+The closed-form log-cumulants were checked against a large sample of an
+unequal-shape cascade ($a = (`r paste(unlist(num$cumulant_check$a), collapse = ", ")`)$,
+$n = `r format(num$cumulant_check$n, big.mark = ",")`$):
+
+```{r cumulants}
+cc <- num$cumulant_check
+knitr::kable(data.frame(
+  cumulant = paste0("kappa_", seq_along(cc$theory) + 1),
+  simulated = unlist(cc$empirical), closed_form = unlist(cc$theory)),
+  digits = 4, align = "lrr")
+```
+
+```{r fig3}
+figure("fig3_identifiability.png", paste(
+  "<b>Figure 3.</b> (a) Absolute log-cumulant ratio &kappa;<sub>3</sub>/&kappa;<sub>2</sub>",
+  "against the homogeneous shape a; the ratio is negative for s = 1/2 and",
+  "positive for s = 1, and for s = 1 it is bounded by 2&zeta;(3)/&zeta;(2) &asymp; 1.46.",
+  "(b) The rejection rates of the table above, as in the manuscript."))
+```
+
+## Data sets
+
+```{r topology}
+topo <- read_result("network_topology")$networks
+tt <- do.call(rbind, lapply(names(topo), function(nm) with(topo[[nm]], data.frame(
+  Network = nm, Vertices = n_nodes, Edges = n_edges_undirected,
+  Density = format(signif(density, 3)), `Mean degree` = round(mean_degree, 1),
+  Transitivity = round(global_clustering, 3),
+  Assortativity = round(degree_assortativity, 4), check.names = FALSE))))
+knitr::kable(tt, align = "lrrrrrr",
+             caption = paste("Descriptive statistics of the three networks as simple",
+                             "undirected graphs (isolated vertices removed)."))
+```
+
+- **email-Eu-core** ([SNAP](https://snap.stanford.edu/data/email-Eu-core.html)):
+  e-mail exchanges in a European research institution. The degree analysis
+  keeps all 1005 vertices of the directed graph, including those of degree
+  zero.
+- **OpenFlights** ([OpenFlights](https://github.com/jpatokal/openflights)):
+  airports and the routes between them.
+- ***C. elegans*** ([WormAtlas](https://www.wormatlas.org/)): the
+  hermaphrodite connectome; chemical synapses and gap junctions, each gap
+  junction counted once.
+- **Turbulence** ([Mendeley Data](https://data.mendeley.com/datasets/xy8ggx9hn6/1)):
+  hot-wire velocity in the wake of a 50 mm cylinder, Re = 5.17 × 10<sup>4</sup>,
+  sampled at 1000 Hz, 2<sup>17</sup> values. The analysis uses squared velocity
+  increments at lags of 2 to 100 ms.
+
+```{r fig5a}
+figure("fig5a_openflights.png", paste(
+  "<b>Figure 5a.</b> OpenFlights: airports at their geographic position,",
+  "colored by continent, with a random sample of 6000 routes."))
+```
+
+```{r fig5bc}
+figure_pair("fig5b_email.png", paste(
+  "<b>Figure 5b.</b> email-Eu-core adjacency matrix, vertices sorted by",
+  "department; pairs within the same department (42 blocks) are shaded."),
+  "fig5c_celegans.png", paste(
+  "<b>Figure 5c.</b> <i>C. elegans</i> adjacency matrix, neurons sorted by",
+  "total degree; chemical synapses in black and gap junctions in orange.",
+  "The estimator uses only the degree sequences of the three networks."))
+```
+
+## Estimates for the networks
+
+```{r networks-data}
+series_table <- function(name, system) {
+  d <- read_result(name)
+  do.call(rbind, lapply(d$series, function(s) {
+    c1 <- s$classes[[s$selected_class]]
+    data.frame(System = system, Series = s$series, n = s$n,
+               VMR = format(signif(s$vmr, 3)), s = class_label(s$selected_class),
+               a_hat = c1$a_hat, a_lo = c1$ci_a_hat[[1]], a_hi = c1$ci_a_hat[[2]],
+               N_hat = c1$N_hat, N_lo = c1$ci_N_hat[[1]], N_hi = c1$ci_N_hat[[2]],
+               N_round = c1$N_round, p = c1$p_value, n_boot = c1$n_boot,
+               lag = if (is.null(s$lag_ms)) NA else s$lag_ms,
+               variant = if (is.null(s$variant)) NA else s$variant)
+  }))
+}
+net <- rbind(series_table("analyze_email_eu_core", "email-Eu-core"),
+             series_table("analyze_openflights", "OpenFlights"),
+             series_table("analyze_celegans", "C. elegans"))
+net$Series <- sub("-degree", "", net$Series)
+show_table <- function(x, first)
+  data.frame(x[first],
+             s = x$s,
+             `&acirc;` = as.character(signif(x$a_hat, 3)), `95% CI (a)` = interval(x$a_lo, x$a_hi),
+             `N&#770;` = as.character(signif(x$N_hat, 3)), `95% CI (N)` = interval(x$N_lo, x$N_hi),
+             `N rd` = x$N_round,
+             p = mapply(pval, x$p, x$n_boot), check.names = FALSE)
+```
+
+For each degree series, only one class is admissible (the sign of the
+log-cumulant ratio of the mixing law excludes the other). The table gives the
+point estimates of $a$ and $N$ with 95% percentile intervals from 1000
+bootstrap resamples of the vertices, the rounded depth $N_{\text{rd}}$, and the
+$p$-value of the bootstrap test of $H_0\colon N = N_{\text{rd}}$. Because
+$N_{\text{rd}}$ is chosen from the same data, that $p$-value is a
+goodness-of-fit diagnostic, not a confirmation of the depth.
+
+```{r networks-table}
+knitr::kable(show_table(net, c("System", "Series", "n", "VMR")), escape = FALSE,
+             align = "llrrcrlrlcr", row.names = FALSE)
+```
+
+```{r forest, fig.height = 4.8, fig.cap = "Depth estimates with 95% bootstrap intervals for the nine degree series (logarithmic axis), read from results/analyze_*.json. The dashed line marks N = 1."}
+par_default(mar = c(4.2, 13, 1, 1))
+y <- rev(seq_len(nrow(net)))
+cols <- pal[match(net$System, unique(net$System))]
+plot(net$N_hat, y, log = "x", xlim = range(c(net$N_lo, net$N_hi)), yaxt = "n",
+     pch = 15 + match(net$System, unique(net$System)), col = cols,
+     xlab = expression(hat(N)~"(95% interval)"), ylab = "")
+segments(net$N_lo, y, net$N_hi, y, col = cols, lwd = 2)
+abline(v = 1, lty = 2, col = "grey40")
+axis(2, at = y, labels = paste(net$System, net$Series, "degree"), cex.axis = 0.85)
+```
+
+- **email-Eu-core and OpenFlights.** Every series selects $s = 1/2$ with
+  $N_{\text{rd}} = 1$, and every interval for $N$ contains one: a single
+  gamma mixing level, that is, negative-binomial degrees, describes both
+  networks. A single level is a description of the degree law, not evidence of
+  a one-level hierarchy.
+- ***C. elegans.*** The three series disagree (different rounded depths, and
+  the total degree selects the other class), and the intervals are wide. With
+  about 250 to 280 neurons, the data do not determine the depth.
+
+```{r fig6abc}
+figure_pair("fig6a_email_fit.png", paste(
+  "<b>Figure 6a.</b> email-Eu-core, out-degree: empirical complementary",
+  "cumulative degree distribution (markers) and the fitted mixed-Poisson",
+  "model at the tested null hypothesis (line: pointwise median; band: 95%",
+  "envelope over 500 simulated degree sequences of the same size)."),
+  "fig6b_openflights_fit.png", "<b>Figure 6b.</b> OpenFlights, out-degree, as in Figure 6a.")
+figure("fig6c_celegans_fit.png",
+       "<b>Figure 6c.</b> <i>C. elegans</i>, the three degree series, as in Figure 6a.",
+       width = 60)
+```
+
+## Estimates for the turbulence record
+
+```{r turbulence-data}
+turb <- series_table("analyze_turbulence", "Turbulence")
+turb$Variant <- ifelse(turb$variant == "full", "full", "thinned")
+```
+
+For squared Gaussian velocity increments, the model with $s = 1/2$, $a = 1/2$,
+$N = 1$ is exact, so it is the benchmark here. Intervals use a moving-block
+bootstrap; the thinned series keep every $k$-th value to reduce serial
+dependence.
+
+```{r turbulence-table}
+tt <- turb[order(turb$lag, turb$Variant), ]
+tab <- show_table(tt, c("lag", "Variant", "n"))
+names(tab)[1] <- "Lag (ms)"
+knitr::kable(tab, escape = FALSE, align = "rlrcrlrlcr", row.names = FALSE)
+```
+
+```{r turbulence-plot, fig.cap = "Depth estimates with 95% block-bootstrap intervals for the squared velocity increments, by lag, read from results/analyze_turbulence.json. The dashed line marks the Gaussian benchmark N = 1."}
+par_default()
+lags <- sort(unique(turb$lag))
+plot(NULL, xlim = range(lags) * c(0.8, 1.25), ylim = range(c(turb$N_lo, turb$N_hi)),
+     log = "x", xlab = "lag (ms)", ylab = expression(hat(N)), xaxt = "n")
+axis(1, at = lags)
+abline(h = 1, lty = 2, col = "grey40")
+for (j in 1:2) {
+  v <- turb[turb$Variant == c("full", "thinned")[j], ]
+  v <- v[order(v$lag), ]
+  x <- v$lag * c(0.95, 1.05)[j]
+  segments(x, v$N_lo, x, v$N_hi, col = pal[j], lwd = 2)
+  points(x, v$N_hat, pch = c(16, 17)[j], col = pal[j])
+}
+legend("bottomleft", bty = "n", col = pal[1:2], pch = c(16, 17), lwd = 2,
+       legend = c("full sample", "thinned"))
+```
+
+At 2, 5 and 20 ms the test rejects $N = 1$ in the full and the thinned
+series, and both intervals for $N$ exclude one: these increments depart from
+the Gaussian benchmark. At 10 ms the full series rejects ($p = 0.001$) but the
+thinned series does not ($p = 0.254$), and the thinned interval contains one.
+At 50 and 100 ms neither series rejects, and the full-sample intervals contain
+one; at 100 ms the thinned interval (1.04&ndash;1.43, from 1309 values) does
+not. The estimate is not monotone in the lag, and compatibility with $N = 1$
+is not the same as Gaussianity.
+
+```{r fig6d}
+figure("fig6d_turbulence.png", paste(
+  "<b>Figure 6d.</b> p-value of the bootstrap test of H<sub>0</sub>: N = 1",
+  "for the squared velocity increments against the lag, for the full sample",
+  "and the thinned series; the dashed line marks 0.05."), width = 60)
+```
+
+## What the results show and what they do not
+
+- With equal shapes across levels, the class, the shape and the depth of a
+  gamma or inverse-gamma cascade are identifiable from the law of the
+  innermost temperature, and the same holds for the degrees of the
+  hierarchical mixed-Poisson model.
+- The depth test holds its level (rejection rates of
+  `r sprintf("%.2f", min(rate[, 1]))` to `r sprintf("%.2f", max(rate[, 1]))`
+  under the null) and reaches a power of
+  `r sprintf("%.2f", rate[as.character(sizes) == "1000", "2"])` against a
+  two-level cascade at $n = 1000$.
+- The analysis assumes equal shapes. A cascade with unequal shapes returns an
+  effective homogeneous depth.
+- No data set here has a known multi-level structure against which an
+  estimated depth could be validated. The department labels of email-Eu-core
+  are a flat partition, and the geographic levels of OpenFlights were not used
+  as a reference.

@@ -5,6 +5,7 @@ __pycache__/
 
 # R build and check output; the pkgdown site is published from the gh-pages branch
 htheoryR/docs/
+htheoryR/vignettes/articles/figures/
 htheoryR/*.tar.gz
 *.Rcheck/
 .Rhistory

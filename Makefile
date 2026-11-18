@@ -40,6 +40,8 @@ submission:
 
 # pkgdown site of htheoryR -> htheoryR/docs/ (published on the gh-pages branch).
 site:
+	mkdir -p htheoryR/vignettes/articles/figures
+	cp figures/fig[1-6]*.png htheoryR/vignettes/articles/figures/
 	cd htheoryR && Rscript -e 'pkgdown::build_site(preview = FALSE, install = TRUE, new_process = TRUE)'
 	$(PYTHON) scripts/fix_site.py htheoryR/docs
 

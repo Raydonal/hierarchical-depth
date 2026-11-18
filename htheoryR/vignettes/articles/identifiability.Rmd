@@ -1,0 +1,158 @@
+---
+title: "Recovering the depth of a cascade"
+description: >
+  Simulate a hierarchical cascade, read its depth and class from the
+  log-cumulants of the innermost temperature, test a fixed depth, and do the
+  same from the degree sequence of a network.
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4.2, dpi = 150, fig.align = "center")
+library(htheoryR)
+# Okabe-Ito palette; every curve also has its own line type or symbol
+pal <- c("#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9")
+par_default <- function() par(mar = c(4.2, 4.2, 1, 1), las = 1, bty = "l",
+                              cex.axis = 0.9)
+```
+
+Every number and plot on this page is computed by `htheoryR` when the site is
+built. The page runs in a few seconds.
+
+## The cascade
+
+A cascade of depth $N$ starts at $T_0$ and draws each temperature from a
+gamma law (class $s = 1/2$) or an inverse-gamma law (class $s = 1$) whose
+mean is the temperature of the level above, with shape $a_i$. Every level
+keeps the mean, $\mathrm{E}[T_N] = T_0$, but adds dispersion. `sample_TN()`
+draws $T_N$ directly.
+
+```{r cascade, fig.cap = "Density of log T_N for depths N = 1, 2, 3 (class s = 1/2, a = 2, 10^5 draws each). Deeper cascades are more dispersed, with a longer left tail."}
+set.seed(1)
+logT <- lapply(1:3, function(N) log(sample_TN(rep(2, N), s = 0.5, size = 1e5)))
+dens <- lapply(logT, density, n = 512)
+par_default()
+plot(NULL, xlim = c(-5, 2), ylim = c(0, max(sapply(dens, function(d) max(d$y)))),
+     xlab = expression(log~T[N]), ylab = "density")
+for (N in 1:3) lines(dens[[N]], col = pal[N], lwd = 2, lty = N)
+legend("topleft", legend = paste("N =", 1:3), col = pal[1:3], lty = 1:3,
+       lwd = 2, bty = "n")
+```
+
+## Why the log-cumulants identify the depth
+
+The cascade is multiplicative, so $\log T_N$ is a sum of $N$ independent
+terms. Its cumulants of order two and higher are sums over the levels. For
+equal shapes, every level contributes the same amount:
+
+$$\kappa_r(\log T_N) = N\,\kappa_r^{(1)}(a), \qquad r \ge 2 .$$
+
+The ratio $\rho_s(a) = \kappa_3/\kappa_2$ therefore does not depend on $N$. It
+is negative for $s = 1/2$ and positive for $s = 1$, so its sign gives the
+class and its value gives the shape $a$. Once $a$ is known, $\kappa_2$ gives
+$N$. `log_cumulants_theory()` returns the closed forms, which are polygamma
+functions of $a$.
+
+```{r ratio, fig.cap = "Absolute log-cumulant ratio |kappa_3 / kappa_2| as a function of the shape a. The two classes have opposite signs, and for s = 1 the ratio stays below 2 zeta(3) / zeta(2), about 1.46 (dotted line)."}
+a <- exp(seq(log(0.05), log(50), length.out = 200))
+rho <- function(a, s) { k <- log_cumulants_theory(a, s, r_max = 3); k[2] / k[1] }
+r_half <- sapply(a, rho, s = 0.5)
+r_one  <- sapply(a, rho, s = 1)
+c(range_s_half = range(r_half), range_s_one = range(r_one))
+par_default()
+plot(a, abs(r_half), log = "xy", type = "l", lwd = 2, col = pal[1],
+     xlab = "shape a", ylab = expression("|" * kappa[3] / kappa[2] * "|"),
+     ylim = range(abs(c(r_half, r_one))))
+lines(a, r_one, lwd = 2, col = pal[2], lty = 2)
+abline(h = 2 * 1.2020569 / (pi^2 / 6), lty = 3, col = "grey40")
+legend("bottomleft", lwd = 2, col = pal[1:2], lty = 1:2, bty = "n",
+       legend = c("s = 1/2 (ratio < 0)", "s = 1 (ratio > 0)"))
+```
+
+## Estimating the depth from a sample
+
+`empirical_log_cumulants()` computes $\hat\kappa_2$ and $\hat\kappa_3$ from
+a sample of $T_N$, and `fit_homogeneous()` inverts the closed forms. Here the
+data come from a cascade with $N = 3$ and $a = 2$; the intermediate levels are
+never observed.
+
+```{r fit}
+set.seed(2)
+T <- sample_TN(c(2, 2, 2), s = 0.5, size = 1e5)
+k_hat <- empirical_log_cumulants(T, r_max = 3)
+k_true <- log_cumulants_theory(c(2, 2, 2), s = 0.5, r_max = 3)
+data.frame(cumulant = c("kappa_2", "kappa_3"), sample = k_hat, theory = k_true)
+str(fit_homogeneous(k_hat[1], k_hat[2], s = 0.5))
+```
+
+The estimator is consistent, but its spread depends on the sample size. The
+next plot repeats the fit on 300 independent samples at each size.
+
+```{r sampling, fig.cap = "Sampling distribution of the depth estimate for a true depth N = 3 (s = 1/2, a = 2), over 300 samples of each size. The dashed line marks the true depth."}
+set.seed(3)
+N_hat <- sapply(c(1000, 10000), function(n) replicate(300, {
+  k <- empirical_log_cumulants(sample_TN(c(2, 2, 2), s = 0.5, size = n), r_max = 3)
+  fit <- tryCatch(fit_homogeneous(k[1], k[2], s = 0.5), error = function(e) NULL)
+  if (is.null(fit)) NA else fit$N
+}))
+colnames(N_hat) <- c("n = 1000", "n = 10000")
+apply(N_hat, 2, quantile, probs = c(0.05, 0.5, 0.95), na.rm = TRUE)
+par_default()
+boxplot(N_hat, col = paste0(pal[1:2], "55"), border = pal[1:2],
+        ylab = expression(hat(N)), outline = FALSE)
+abline(h = 3, lty = 2)
+```
+
+## Testing a fixed depth
+
+`test_depth()` is a parametric-bootstrap test of $H_0\colon N = N_0$. With
+$n = 1000$ draws from a two-level cascade, the test of $N_0 = 1$ rejects; with
+draws from a one-level cascade, it does not. The manuscript measures the size
+and power of this test in a simulation study (see [Results of the manuscript](results.html#simulation-size-and-power-of-the-depth-test)).
+
+```{r test}
+set.seed(4)
+two_levels <- sample_TN(c(2, 2), s = 0.5, size = 1000)
+one_level  <- sample_TN(2, s = 0.5, size = 1000)
+rbind(true_N_2 = unlist(test_depth(two_levels, N0 = 1, s = 0.5, n_boot = 200)),
+      true_N_1 = unlist(test_depth(one_level,  N0 = 1, s = 0.5, n_boot = 200)))
+```
+
+## The same argument for networks
+
+In the hierarchical mixed-Poisson model, each vertex has a propensity $W_v$
+that is the product of factors attached to its nested communities, and its
+degree is Poisson with mean $\lambda W_v$. Mixed-Poisson laws are identifiable
+from the degrees, and the factorial moments $\mathrm{E}[D^{(k)}] =
+\lambda^k\,\mathrm{E}[W^k]$ carry the log-cumulants of $W$. The depth can
+therefore be read from the degree sequence alone.
+
+```{r degrees, fig.cap = "Complementary cumulative degree distribution P(D >= k) of 10^5 simulated vertices for depths N = 0 to 3 (s = 1/2, a = 2, lambda = 20). At equal lambda and a, depth spreads the degrees."}
+set.seed(5)
+D <- lapply(0:3, function(N) sample_degrees(rep(2, N), s = 0.5, lam = 20, size = 1e5))
+par_default()
+plot(NULL, xlim = c(1, max(unlist(D))), ylim = c(1e-5, 1), log = "xy",
+     xlab = "degree k", ylab = expression(P(D >= k)))
+for (i in 1:4) {
+  k <- sort(unique(D[[i]]))
+  ccdf <- 1 - ecdf(D[[i]])(k - 1)
+  lines(pmax(k, 1), ccdf, col = pal[i], lwd = 2, lty = i)
+}
+legend("bottomleft", bty = "n", col = pal[1:4], lty = 1:4, lwd = 2,
+       legend = sprintf("N = %d, VMR = %.1f", 0:3,
+                        sapply(D, function(d) var(d) / mean(d))))
+```
+
+```{r netfit}
+set.seed(6)
+D3 <- sample_degrees(c(3, 3, 3), s = 0.5, lam = 15, size = 1e5)
+net_fit <- fit_homogeneous_network(D3, s = 0.5)
+str(net_fit)
+```
+
+The rounded depth is `r net_fit$N_round`, against a true depth $N = 3$, and no
+community membership was observed. The point estimates
+($\hat N = `r signif(net_fit$N, 3)`$, $\hat a = `r signif(net_fit$a, 3)`$ against
+$a = 3$) are less precise than those obtained from $T_N$ itself above, because
+the degrees observe $W$ only through Poisson noise. The page *Results of the manuscript*
+applies the same estimator to real networks and to turbulence data.
