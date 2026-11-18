@@ -8,7 +8,7 @@ RUN = PYTHONPATH=. $(PYTHON)
 ANALYSES = analyze_email_eu_core analyze_openflights analyze_celegans \
            analyze_turbulence network_topology compute_article_numbers
 
-.PHONY: all results tables figures article submission site test-fast
+.PHONY: all results tables figures article submission site publish-site test-fast
 
 all: results tables figures article
 
@@ -42,6 +42,10 @@ submission:
 site:
 	cd htheoryR && Rscript -e 'pkgdown::build_site(preview = FALSE, install = TRUE, new_process = TRUE)'
 	$(PYTHON) scripts/fix_site.py htheoryR/docs
+
+# Replace the gh-pages branch with the current htheoryR/docs (run make site first).
+publish-site:
+	scripts/publish_site.sh
 
 test-fast:
 	$(RUN) -m pytest tests/ -q -m "not slow"
